@@ -9,26 +9,26 @@ pipeline {
             }
         }
         stage('Build Docker Image') {
-            when{
+            when {
                 branch 'master'
             }
             steps {
-                script{
+                script {
                     app = docker.build("krv804/train-schedule")
-                    app.inside{
+                    app.inside {
                         sh 'echo $(curl localhost:8080)'
                     }
                 }
             }
         }
         stage('Push Docker Image') {
-            when{
+            when {
                 branch 'master'
             }
             steps {
-                script{
-                    docker.withRegistry('https://registry.hub.docker.hub', 'docker_hub_login')
-                        app.push("env.BUILD_NUMBER")
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker_hub_login') {
+                        app.push("${env.BUILD_NUMBER}")
                         app.push("latest")
                     }
                 }
